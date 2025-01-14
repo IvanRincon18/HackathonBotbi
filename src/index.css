@@ -1,0 +1,27 @@
+
+/* Fondo azul oscuro personalizado */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #011c43; /* Color del fondo */
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white; /* Texto por defecto */
+}
+
+
+/* Estilo para el encabezado 'Bienvenido!' */
+.card h1 {
+    color: #011c43; /* Texto del mismo color que el fondo */
+    background-color: #ffffff; /* Fondo blanco detrás del texto */
+    padding: 10px; /* Espaciado interno */
+    border-radius: 5px; /* Bordes redondeados */
+    font-size: 2rem;
+    margin-bottom: 20px;
+    display: inline-block; /* Hace que el fondo ajuste al texto */
+}
+
+  
