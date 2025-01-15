@@ -4,14 +4,30 @@ import { Link } from 'react-router-dom';
 function MainPage() {
   return (
     <div className="d-flex" style={{ height: '100vh' }}>
-      {/* Menú Lateral */}
+      {/* Barra Lateral Pegada a la Izquierda */}
       <aside
-        className="bg-primary text-white p-4"
-        style={{ width: '250px', height: '100vh' }}
+        className="bg-primary text-white"
+        style={{
+          width: '250px', // Ancho fijo de la barra lateral
+          height: '100vh', // Altura completa de la pantalla
+          position: 'fixed', // Fija la barra en el lado izquierdo
+          top: '0',
+          left: '0',
+          padding: '20px',
+        }}
       >
+        <h2 style={{ fontSize: '1.5rem', marginBottom: '20px' }}>Menú</h2>
         <ul className="list-unstyled">
           <li>
-            <Link to="/clients" className="text-white text-decoration-none">
+            <Link
+              to="/clients"
+              className="text-white text-decoration-none"
+              style={{
+                fontSize: '1.2rem',
+                display: 'block',
+                marginBottom: '10px',
+              }}
+            >
               Apartado de Clientes
             </Link>
           </li>
@@ -19,8 +35,16 @@ function MainPage() {
       </aside>
 
       {/* Contenido Principal */}
-      <main style={{ flex: 1, padding: '20px', overflowY: 'auto' }}>
-        {/* Encabezado */}
+      <main
+        style={{
+          marginLeft: '250px', // Ajusta el contenido para dejar espacio a la barra lateral
+          flex: 1,
+          padding: '20px',
+          backgroundColor: '#f8f9fa', // Fondo claro para el contenido principal
+          overflowY: 'auto',
+        }}
+      >
+        {/* Encabezado "Bienvenido a Botbi" */}
         <div
           style={{
             backgroundColor: '#ffffff', // Fondo blanco
@@ -36,7 +60,7 @@ function MainPage() {
           </h1>
         </div>
 
-        {/* Apartado de Clientes */}
+        {/* Gestión de Clientes */}
         <section
           style={{
             backgroundColor: '#ffffff', // Fondo blanco
