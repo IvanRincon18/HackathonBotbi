@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import botbiLogo from '../assets/botbi.png'; // Importa el logotipo
+import botbiLogo from '../assets/botbi.png'; 
 
 function Login() {
   const [username, setUsername] = useState('');
@@ -28,7 +28,7 @@ function Login() {
     }
   };
 
-  // Maneja el registro de nuevos usuarios
+  
   const handleRegister = (e) => {
     e.preventDefault();
 
@@ -42,7 +42,7 @@ function Login() {
       return;
     }
 
-    // Verifica si el usuario ya existe
+    
     const userExists = registeredUsers.find(
       (user) => user.username === newUser.username
     );

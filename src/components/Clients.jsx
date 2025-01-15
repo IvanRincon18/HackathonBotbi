@@ -1,147 +1,109 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import botbiLogo from '../assets/botbi.png'; // Importa el logotipo
+import React, { useState, useContext } from 'react';
+import { ClientsContext } from '../components/ClientsContext'; // Importa el contexto
 
 function Clients() {
-  const [name, setName] = useState('');
-  const [address, setAddress] = useState('');
-  const [email, setEmail] = useState('');
-  const navigate = useNavigate(); // Para redirigir al usuario
+  const { addClient } = useContext(ClientsContext); // Accede al método para agregar clientes
+  const [formData, setFormData] = useState({
+    nombres: '',
+    apellidoPaterno: '',
+    apellidoMaterno: '',
+    calle: '',
+    numero: '',
+    codigoPostal: '',
+    colonia: '',
+    ciudad: '',
+    coordenadas: null,
+  });
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!name || !address || !email) {
-      alert('Por favor, completa todos los campos.');
-      return;
-    }
+    const { calle, numero, colonia, ciudad, codigoPostal } = formData;
+    const address = `${calle} ${numero}, ${colonia}, ${ciudad}, ${codigoPostal}`;
 
-    alert(`Cliente registrado:\nNombre: ${name}\nDirección: ${address}\nCorreo: ${email}`);
-    setName('');
-    setAddress('');
-    setEmail('');
+    try {
+      const response = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+          address
+        )}&key=AIzaSyA7EDj7-PDvjN2p7orn64kafmt6yTWPhl0`
+      );
+
+      const data = await response.json();
+
+      if (data.status === 'OK') {
+        const location = data.results[0].geometry.location;
+        const newClient = { ...formData, coordenadas: location };
+        addClient(newClient); // Agrega el cliente al contexto
+        alert('Cliente registrado con éxito');
+        setFormData({
+          nombres: '',
+          apellidoPaterno: '',
+          apellidoMaterno: '',
+          calle: '',
+          numero: '',
+          codigoPostal: '',
+          colonia: '',
+          ciudad: '',
+          coordenadas: null,
+        });
+      } else {
+        alert('Error al obtener las coordenadas');
+      }
+    } catch (error) {
+      alert('Hubo un error al registrar al cliente');
+    }
   };
 
   return (
-    <div
-      style={{
-        backgroundColor: '#011c43', // Fondo azul oscuro
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: '20px',
-      }}
-    >
-      {/* Contenido del Formulario */}
-      <div
-        className="card"
-        style={{
-          maxWidth: '600px',
-          width: '100%',
-          padding: '30px',
-          backgroundColor: '#ffffff', // Fondo blanco
-          borderRadius: '10px',
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)', // Sombra suave
-        }}
-      >
-        {/* Logotipo de Botbi */}
-        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-          <img
-            src={botbiLogo}
-            alt="Botbi Logo"
-            style={{
-              maxWidth: '150px', // Tamaño máximo del logotipo
-              height: 'auto',
-            }}
-          />
-        </div>
-
-        <h2
-          className="text-center"
-          style={{
-            color: '#011c43',
-            fontSize: '2rem',
-            marginBottom: '20px',
-          }}
-        >
-          Gestión de Clientes
-        </h2>
-        <form onSubmit={handleSubmit}>
-          <div className="mb-3">
-            <label className="form-label" style={{ color: '#011c43' }}>
-              Nombre
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              style={{ padding: '12px', fontSize: '1rem' }}
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label" style={{ color: '#011c43' }}>
-              Dirección
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              style={{ padding: '12px', fontSize: '1rem' }}
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label" style={{ color: '#011c43' }}>
-              Correo Electrónico
-            </label>
-            <input
-              type="email"
-              className="form-control"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              style={{ padding: '12px', fontSize: '1rem' }}
-            />
-          </div>
-          <button
-            type="submit"
-            className="btn btn-primary w-100"
-            style={{ padding: '12px', fontSize: '1.1rem' }}
-          >
-            Registrar Cliente
-          </button>
-        </form>
-
-        {/* Botón Circular para Regresar */}
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
-          <button
-            onClick={() => navigate('/main')} // Redirige a la página principal
-            title="Regresar a la página principal" // Texto al pasar el cursor
-            style={{
-              width: '60px',
-              height: '60px',
-              borderRadius: '50%',
-              backgroundColor: '#ffffff', // Fondo blanco
-              border: '2px solid #011c43', // Borde azul oscuro
-              color: '#011c43', // Color de la flecha
-              fontSize: '1.5rem',
-              fontWeight: 'bold',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              cursor: 'pointer',
-              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)', // Sombra suave
-            }}
-          >
-            ←
-          </button>
-        </div>
-      </div>
+    <div style={{ padding: '30px' }}>
+      <h1>Registro de Clientes</h1>
+      <form onSubmit={handleSubmit} style={{ maxWidth: '600px', margin: '0 auto' }}>
+        <label>
+          Nombre(s):
+          <input type="text" name="nombres" value={formData.nombres} onChange={handleChange} required />
+        </label>
+        <label>
+          Apellido Paterno:
+          <input type="text" name="apellidoPaterno" value={formData.apellidoPaterno} onChange={handleChange} required />
+        </label>
+        <label>
+          Apellido Materno:
+          <input type="text" name="apellidoMaterno" value={formData.apellidoMaterno} onChange={handleChange} required />
+        </label>
+        <label>
+          Calle:
+          <input type="text" name="calle" value={formData.calle} onChange={handleChange} required />
+        </label>
+        <label>
+          Número:
+          <input type="text" name="numero" value={formData.numero} onChange={handleChange} maxLength="5" required />
+        </label>
+        <label>
+          Código Postal:
+          <input type="text" name="codigoPostal" value={formData.codigoPostal} onChange={handleChange} maxLength="5" required />
+        </label>
+        <label>
+          Colonia:
+          <input type="text" name="colonia" value={formData.colonia} onChange={handleChange} required />
+        </label>
+        <label>
+          Ciudad:
+          <input type="text" name="ciudad" value={formData.ciudad} onChange={handleChange} required />
+        </label>
+        <button type="submit" style={{ marginTop: '20px' }}>
+          Registrar Cliente
+        </button>
+      </form>
     </div>
   );
 }
 
 export default Clients;
-
-
